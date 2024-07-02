@@ -113,6 +113,7 @@ CCProgram fs %{
   in vec3 world_pos;
   in vec3 zero_pos;
 
+  // 边缘光
   float rim(inout vec4 color, float rimIntensity, float rimPower, float rimMin, float rimMax) {
     vec3 normal = normalize(world_normal);
     vec3 viewDir = normalize(camera_dir);
@@ -124,12 +125,18 @@ CCProgram fs %{
     return alpha;
   }
 
+  // 流光
+  void flowLight(inout vec4 textureColor,vec3 world_pos, vec3 zero_pos, vec4 flowTexture_ST, float flowIntensity) {
+    vec2 uv = (world_pos - zero_pos).xy * flowTexture_ST.zw;
+    textureColor = texture(flowTexture, uv + cc_time.x * flowTexture_ST.xy);
+    textureColor = textureColor * flowIntensity;
+  }
+
   vec4 frag () {
     vec4 outColor;
     float alpha = rim(outColor, rimIntensity, rimPower, rimMin, rimMax);
-    vec2 uv = (world_pos - zero_pos).xy * flowTexture_ST.zw;
-    vec4 textureColor = texture(flowTexture, uv + cc_time.x * flowTexture_ST.xy);
-    textureColor = textureColor * flowIntensity;
+    vec4 textureColor;
+    flowLight(textureColor, world_pos, zero_pos, flowTexture_ST, flowIntensity);
     outColor.rgb = textureColor.rgb + outColor.rgb;
     alpha = clamp(outColor.a + textureColor.r, 0.0, 1.0);
     return vec4(outColor.rgb, alpha);
