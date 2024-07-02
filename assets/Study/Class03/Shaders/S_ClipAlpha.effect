@@ -1,0 +1,51 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: vs:vert # builtin header
+      frag: fs:frag
+      properties: &props
+        mainTexture:    { value: white }
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }
+        clipAlpha:      { value: 0.5, editor: { displayName: "Clip Alpha", slide: true, range: [0, 1], step: 0.1 } }
+}%
+
+CCProgram vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+  
+  layout(location = 0) in vec4 a_position;
+  layout(location = 1) in vec3 a_normal;
+  layout(location = 2) in vec2 a_texCoord;
+
+  out vec2 v_uv;
+
+  vec4 vert () {
+    v_uv = a_texCoord;
+    return cc_matProj * cc_matView * cc_matWorld * a_position;
+  }
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include <legacy/output>
+  #include <legacy/fog-fs>
+
+  in vec2 v_uv;
+
+  uniform sampler2D mainTexture;
+
+  uniform Constant {
+    vec4 mainColor;
+    float clipAlpha;
+  };
+
+  vec4 frag () {
+    vec4 col = mainColor * texture(mainTexture, v_uv);
+    if (col.a < clipAlpha) discard;
+    return col;
+  }
+}%

@@ -1,0 +1,64 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: vs # builtin header
+      frag: fs
+      properties: &props
+        mainTexture:    { value: white }
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }
+        clipThreshold:  { value: 0.5, editor: { displayName: "Clip Threshold",slide: true, range: [0.1, 1.1], step: 0.001 }}
+        noiseTexture:   { value: white }
+        speed:          { value: [0, 1], editor: { displayName: "Speed" } }
+}%
+
+CCProgram ubo-stants %{
+  uniform Constants {
+    vec4 mainColor;
+    vec2 speed;
+    float clipThreshold;
+  };
+}%
+
+CCProgram vs%{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+
+  layout(location = 0) in vec3 a_position;
+  layout(location = 1) in vec2 a_normal;
+  layout(location = 2) in vec2 a_texCoord;
+
+  out vec2 TexCoord;
+
+  void main()
+  {
+    TexCoord = a_texCoord;
+    gl_Position = cc_matProj * cc_matView * cc_matWorld * vec4(a_position, 1.0);
+  }
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include "ubo-stants"
+  #include <cc-global>
+  #include <cc-local>
+  
+  in vec2 TexCoord;
+  uniform sampler2D mainTexture;
+  uniform sampler2D noiseTexture;
+
+  layout(location = 0) out vec4 fragColorX;
+
+  void main()  {
+    vec4 textureColor = texture(mainTexture, TexCoord + cc_time.x * speed);
+    vec4 noiseColor = texture(noiseTexture, TexCoord + cc_time.x * speed);
+    float gradient = textureColor.r;
+    float noise = noiseColor.r;
+    float outputColor = gradient * noise;
+    if (outputColor < clipThreshold) discard;
+    fragColorX = vec4(outputColor) * mainColor;
+  }
+}%

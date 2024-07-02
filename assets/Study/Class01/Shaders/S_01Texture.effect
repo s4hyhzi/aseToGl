@@ -1,0 +1,54 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: vs
+      frag: fs
+      properties: &props
+        _mainTexture: { value: white }
+        _mainTiling: { value: [1, 1], editor: { displayName: "Tiling" }, target: _mainTexture_ST.xy }
+        _mainOffset: { value: [0, 0], editor: { displayName: "Offset" },target: _mainTexture_ST.zw }
+        _mainColor: { value: [1, 1, 1, 1], editor: { type: color } }
+  }%
+
+CCProgram ubo-stants %{
+  uniform Constants {
+    vec4 _mainTexture_ST;
+    vec4 _mainColor;
+  };
+}%
+
+CCProgram vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+  #include "ubo-stants"
+
+  layout(location = 0) in vec3 a_position;
+  layout(location = 1) in vec3 a_normal;
+  layout(location = 2) in vec2 a_texCoord;
+  out vec2 TexCoord;
+
+  void main()
+  {
+    gl_Position = cc_matProj * cc_matView * cc_matWorld * vec4(a_position, 1.0);
+    TexCoord = a_texCoord * _mainTexture_ST.xy + _mainTexture_ST.zw;
+  }
+
+}%
+
+CCProgram fs %{
+
+  precision highp float;
+  #include "ubo-stants"
+  in vec2 TexCoord; 
+  uniform sampler2D _mainTexture;
+
+  layout(location = 0) out vec4 fragColorX;
+
+  void main()  {
+    fragColorX = texture(_mainTexture, TexCoord) * _mainColor;
+  }
+}%

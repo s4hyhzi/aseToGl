@@ -1,0 +1,79 @@
+{
+  "ver": "2.3.12",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "e5453f25-7afe-4ae0-afb3-c3a2738426a4",
+  "files": [],
+  "subMetas": {
+    "a781f": {
+      "importer": "gltf-mesh",
+      "uuid": "e5453f25-7afe-4ae0-afb3-c3a2738426a4@a781f",
+      "displayName": "",
+      "id": "a781f",
+      "name": "Suzanne.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 3936
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9a6b8": {
+      "importer": "gltf-scene",
+      "uuid": "e5453f25-7afe-4ae0-afb3-c3a2738426a4@9a6b8",
+      "displayName": "",
+      "id": "9a6b8",
+      "name": "headlow.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "e5453f25-7afe-4ae0-afb3-c3a2738426a4@9a6b8",
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "e5453f25-7afe-4ae0-afb3-c3a2738426a4@a781f"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [],
+      "scenes": [
+        "e5453f25-7afe-4ae0-afb3-c3a2738426a4@9a6b8"
+      ]
+    }
+  }
+}

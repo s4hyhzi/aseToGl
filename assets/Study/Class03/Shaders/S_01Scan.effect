@@ -1,0 +1,137 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: scan
+    passes:
+    - vert: depth-vs:vert # builtin header
+      frag: depth-fs:frag
+      rasterizerState:
+        cullMode: back
+      blendState:
+        targets:
+        - blend: true
+          blendColorMask: none
+      depthStencilState:
+        depthTest: true
+        depthWrite: true
+    - vert: vs:vert # builtin header
+      frag: fs:frag
+      properties: &props
+        rimColor:      { value: [1, 1, 1, 0], editor: { type: color } }
+        innerColor:    { value: [1, 1, 1, 0], editor: { type: color } }
+        rimPower:      { value: 1.0, editor: { displayName: "Rim Power", slide: true, range: [0, 5], step: 0.25 } }
+        rimIntensity:  { value: 1.0, editor: { displayName: "Rim Intensity", slide: true, range: [0, 5], step: 0.25 } }
+        rimMin:        { value: 0.0, editor: { displayName: "Rim Min", slide: true, range: [-1, 1], step: 0.01 } }
+        rimMax:        { value: 1.0, editor: { displayName: "Rim Max", slide: true, range: [0, 2], step: 0.01 } }
+        flowTexture:   { value: white }
+        flowSpeed:     { value: [0,1], editor: { displayName: "Speed" }, target: flowTexture_ST.xy }
+        flowTilling:   { value: [1, 1], editor: { displayName: "Tilling" }, target: flowTexture_ST.zw }
+        flowIntensity: { value: 1.0, editor: { displayName: "Intensity", slide: true, range: [0, 5], step: 0.25 } }
+      rasterizerState:
+        cullMode: back
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one
+      depthStencilState:
+        depthTest: true
+        depthWrite: false
+        depthFunc: equal
+}%
+
+
+CCProgram ubo-stants %{ 
+  uniform Constants {
+    vec4 rimColor;
+    vec4 innerColor;
+    vec4 flowTexture_ST;
+    float flowIntensity;
+    float rimPower;
+    float rimIntensity;
+    float rimMin;
+    float rimMax;
+  };
+}%
+
+CCProgram depth-vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+
+  layout(location = 0) in vec4 a_position;
+
+  vec4 vert(){
+    return cc_matProj * cc_matView * cc_matWorld * a_position;
+  }
+}%
+
+CCProgram depth-fs %{
+  precision highp float;
+  #include "ubo-stants"
+
+  vec4 frag () {
+    return vec4(1.0, 1.0, 1.0, 0.0);
+  }
+}%
+
+CCProgram vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+
+  layout(location = 0) in vec4 a_position;
+  layout(location = 1) in vec3 a_normal;
+
+  out vec3 world_normal;
+  out vec3 camera_dir;
+  out vec3 world_pos;
+  out vec3 zero_pos;
+
+  vec4 vert () {
+    world_normal = normalize(cc_matWorld * vec4(a_normal, 0.0)).xyz;
+    world_pos = (cc_matWorld * a_position).xyz;
+    zero_pos = (vec4(0.0) * cc_matWorld).xyz;
+    camera_dir = normalize(cc_cameraPos.xyz - world_pos);
+    return cc_matProj * cc_matView * cc_matWorld * a_position;
+  }
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include <cc-local>
+  #include <cc-global>
+  #include "ubo-stants"
+
+  uniform sampler2D flowTexture;
+
+  in vec3 world_normal;
+  in vec3 camera_dir;
+  in vec3 world_pos;
+  in vec3 zero_pos;
+
+  float rim(inout vec4 color, float rimIntensity, float rimPower, float rimMin, float rimMax) {
+    vec3 normal = normalize(world_normal);
+    vec3 viewDir = normalize(camera_dir);
+    float nDotV = max(dot(normal, viewDir),0.0);
+    float rim = pow(1.0 - nDotV, rimPower);
+    float alpha = smoothstep(rimMin, rimMax, rim);
+    vec4 mainColor = rimColor * rimIntensity;
+    color = mix(innerColor, mainColor, alpha);
+    return alpha;
+  }
+
+  vec4 frag () {
+    vec4 outColor;
+    float alpha = rim(outColor, rimIntensity, rimPower, rimMin, rimMax);
+    vec2 uv = (world_pos - zero_pos).xy * flowTexture_ST.zw;
+    vec4 textureColor = texture(flowTexture, uv + cc_time.x * flowTexture_ST.xy);
+    textureColor = textureColor * flowIntensity;
+    outColor.rgb = textureColor.rgb + outColor.rgb;
+    alpha = clamp(outColor.a + textureColor.r, 0.0, 1.0);
+    return vec4(outColor.rgb, alpha);
+  }
+}%

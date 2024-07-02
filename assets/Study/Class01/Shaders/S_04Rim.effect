@@ -1,0 +1,109 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques: 
+  - name: transparent
+    passes:
+    - vert: depth_vs:vert # builtin header
+      frag: depth_fs:frag
+      rasterizerState:
+        cullMode: back
+      blendState:
+        targets:
+        - blend: true
+          blendColorMask: none
+      depthStencilState:
+        depthTest: true
+        depthWrite: true
+    - &rim
+      vert: vs:vert # builtin header
+      frag: fs:frag
+      properties: &props
+        rimColor: { value: [1, 1, 1, 1], editor: { type: color } }
+        rimPower: { value: 1.0, editor: { displayName: "Rim Power", slide: true, range: [0, 5], step: 1 } }
+        rimEintensity: { value: 1.0, editor: { displayName: "Rim Intensity", slide: true, range: [0, 5], step: 1 }}
+      rasterizerState:
+        cullMode: back
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one
+      depthStencilState:
+        depthTest: true
+        depthWrite: false
+        depthFunc: equal
+}%
+
+CCProgram ubo-stants %{
+  uniform Constants {
+    vec4 rimColor;
+    float rimPower;
+    float rimEintensity;
+  };
+}%
+
+CCProgram depth_vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+
+  layout(location = 0) in vec4 a_position;
+
+  vec4 vert(){
+    return cc_matProj * cc_matView * cc_matWorld * a_position;
+  }
+}%
+
+CCProgram depth_fs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+
+  vec4 frag () {
+    vec4 _Color;
+    return _Color;
+  }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+
+  layout(location = 0) in vec4 a_position;
+  layout(location = 1) in vec3 a_normal;
+  layout(location = 2) in vec2 a_texCoord;
+
+  out vec2 v_uv;
+  out vec3 normal_word;
+  out vec3 view_dir;
+
+  vec4 vert(){
+    v_uv = a_texCoord;
+    normal_word = (vec4(a_normal,0) * cc_matWorldIT).xyz;
+    vec3 worldPos = (cc_matWorld * a_position).xyz;
+    view_dir = normalize(cc_cameraPos.xyz - worldPos);
+    return cc_matProj * cc_matView * cc_matWorld * a_position;
+  }
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include "ubo-stants"
+  in vec3 normal_word;
+  in vec3 view_dir;
+
+  vec4 frag () {
+    vec3 normal = normalize(normal_word);
+    vec3 viewDir = normalize(view_dir);
+    float NdotV = max(dot(normal, viewDir), 0.0);
+    float rim = pow(1.0 - NdotV,rimPower);
+    vec3 rimColor = rimColor.rgb * rimEintensity;
+    float alpha = max(rim * rimEintensity, 0.0);
+    return vec4(rimColor,alpha);
+  }
+}%

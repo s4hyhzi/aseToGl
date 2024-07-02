@@ -1,0 +1,79 @@
+{
+  "ver": "2.3.12",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "7169dc00-ef2d-4edb-99a1-c57a9c0be954",
+  "files": [],
+  "subMetas": {
+    "3921d": {
+      "importer": "gltf-mesh",
+      "uuid": "7169dc00-ef2d-4edb-99a1-c57a9c0be954@3921d",
+      "displayName": "",
+      "id": "3921d",
+      "name": "Syringe.008.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 885005
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a925e": {
+      "importer": "gltf-scene",
+      "uuid": "7169dc00-ef2d-4edb-99a1-c57a9c0be954@a925e",
+      "displayName": "",
+      "id": "a925e",
+      "name": "Syringe.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "7169dc00-ef2d-4edb-99a1-c57a9c0be954@a925e",
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "7169dc00-ef2d-4edb-99a1-c57a9c0be954@3921d"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [],
+      "scenes": [
+        "7169dc00-ef2d-4edb-99a1-c57a9c0be954@a925e"
+      ]
+    }
+  }
+}
