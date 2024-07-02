@@ -1,0 +1,98 @@
+{
+  "ver": "2.3.12",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "102de344-28d9-4cda-b68e-44b19ea748ad",
+  "files": [],
+  "subMetas": {
+    "0755a": {
+      "importer": "gltf-mesh",
+      "uuid": "102de344-28d9-4cda-b68e-44b19ea748ad@0755a",
+      "displayName": "",
+      "id": "0755a",
+      "name": "002-0-2.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 131712
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b1fcd": {
+      "importer": "gltf-material",
+      "uuid": "102de344-28d9-4cda-b68e-44b19ea748ad@b1fcd",
+      "displayName": "",
+      "id": "b1fcd",
+      "name": "002-1-2.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "c0a89": {
+      "importer": "gltf-scene",
+      "uuid": "102de344-28d9-4cda-b68e-44b19ea748ad@c0a89",
+      "displayName": "",
+      "id": "c0a89",
+      "name": "beetle.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": false,
+      "preferLocalTimeSpan": false
+    },
+    "redirect": "102de344-28d9-4cda-b68e-44b19ea748ad@c0a89",
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "102de344-28d9-4cda-b68e-44b19ea748ad@0755a"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [
+        "102de344-28d9-4cda-b68e-44b19ea748ad@b1fcd"
+      ],
+      "scenes": [
+        "102de344-28d9-4cda-b68e-44b19ea748ad@c0a89"
+      ]
+    }
+  }
+}

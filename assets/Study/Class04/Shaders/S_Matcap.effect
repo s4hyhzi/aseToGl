@@ -1,0 +1,86 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: vs:vert # builtin header
+      frag: fs:frag
+      properties: &props
+        MatCapTexture:      { value: white }
+        MatCapIntensity:    { value: 1.0, editor: { displayName: "Intensity", slide: true, range: [0, 10], step: 0.01 } }
+        MatCapAddTexture:   { value: white }
+        MatCapAddIntensity: { value: 0.0, editor: { displayName: "Add Intensity", slide: true, range: [0, 1], step: 0.01 } }
+        DiffuseTexture:     { value: white }
+        RampTexture:        { value: white }
+}%
+
+CCProgram ubo-data %{
+  uniform MatCap {
+    float MatCapIntensity;
+    float MatCapAddIntensity;
+  };
+}%
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  layout(location = 0) in vec4 a_position;
+  layout(location = 1) in vec3 a_normal;
+  layout(location = 2) in vec2 a_texCoord;
+
+  out vec2 v_uv;
+  out vec3 v_position;
+  out vec3 view_normal;
+  out vec3 view_dir;
+  out vec3 world_normal;
+
+  vec4 vert () {
+    vec4 pos = cc_matProj * cc_matView * cc_matWorld * a_position;
+    view_normal = (cc_matView * cc_matWorld * vec4(a_normal, 0.0)).xyz;
+    v_uv = a_texCoord;
+    v_position = pos.xyz;
+    vec3 world_pos = (cc_matWorld * a_position).xyz;
+    view_dir = normalize(cc_cameraPos.xyz - world_pos);
+    world_normal = normalize(cc_matWorld * vec4(a_normal, 0.0)).xyz;
+    return pos;
+  }
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include "ubo-data"
+
+  in vec2 v_uv;
+  in vec3 v_position;
+  in vec3 view_normal;
+  in vec3 view_dir;
+  in vec3 world_normal;
+
+  uniform sampler2D MatCapTexture;
+  uniform sampler2D DiffuseTexture;
+  uniform sampler2D MatCapAddTexture;
+  uniform sampler2D RampTexture;
+
+  vec4 frag () {
+    vec2 mat_cap_uv = vec2(view_normal.xy * 0.5 + 0.5);
+    vec4 col = texture(MatCapTexture, mat_cap_uv) * MatCapIntensity;
+
+    vec4 diffuse = texture(DiffuseTexture, v_uv);
+
+    vec4 add_col = texture(MatCapAddTexture, mat_cap_uv) * MatCapAddIntensity;
+
+    vec3 world_normal = normalize(world_normal);
+    vec3 view_dir = normalize(view_dir);
+    float nDotV = clamp(dot(world_normal, view_dir), 0.0, 1.0);
+    float rim = 1.0 - nDotV;
+    vec2 ramp_uv = vec2(rim, 0.5);
+
+    vec4 ramp = texture(RampTexture, ramp_uv);
+
+    return col * diffuse * ramp + add_col;
+  }
+}%

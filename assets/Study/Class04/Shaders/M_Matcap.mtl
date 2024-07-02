@@ -1,0 +1,48 @@
+{
+  "__type__": "cc.Material",
+  "_name": "",
+  "_objFlags": 0,
+  "__editorExtras__": {},
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "3b178fc2-ff93-4893-b941-15030541c974",
+    "__expectedType__": "cc.EffectAsset"
+  },
+  "_techIdx": 0,
+  "_defines": [
+    {}
+  ],
+  "_states": [
+    {
+      "rasterizerState": {},
+      "depthStencilState": {},
+      "blendState": {
+        "targets": [
+          {}
+        ]
+      }
+    }
+  ],
+  "_props": [
+    {
+      "MatCapTexture": {
+        "__uuid__": "672d6d58-8893-467d-ae3f-d0ebaf0fe1b7@6c48a",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "MatCapIntensity": 6,
+      "MatCapAddTexture": {
+        "__uuid__": "c8709a82-606e-4514-bbb8-92933ffd0f5f@6c48a",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "MatCapAddIntensity": 0.47,
+      "DiffuseTexture": {
+        "__uuid__": "c0bab897-662a-4630-b9dd-b25451bdb2e9@6c48a",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "RampTexture": {
+        "__uuid__": "8135943d-fb86-45b2-ae68-51b70fb9a480@6c48a",
+        "__expectedType__": "cc.Texture2D"
+      }
+    }
+  ]
+}
