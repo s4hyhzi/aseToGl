@@ -1,0 +1,79 @@
+{
+  "ver": "2.3.12",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "34dcf689-c52b-4fd5-bc28-3e2bb83c33a1",
+  "files": [],
+  "subMetas": {
+    "ab47a": {
+      "importer": "gltf-mesh",
+      "uuid": "34dcf689-c52b-4fd5-bc28-3e2bb83c33a1@ab47a",
+      "displayName": "",
+      "id": "ab47a",
+      "name": "圆环.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 4160
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d08cc": {
+      "importer": "gltf-scene",
+      "uuid": "34dcf689-c52b-4fd5-bc28-3e2bb83c33a1@d08cc",
+      "displayName": "",
+      "id": "d08cc",
+      "name": "tentacles01.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "34dcf689-c52b-4fd5-bc28-3e2bb83c33a1@d08cc",
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "34dcf689-c52b-4fd5-bc28-3e2bb83c33a1@ab47a"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [],
+      "scenes": [
+        "34dcf689-c52b-4fd5-bc28-3e2bb83c33a1@d08cc"
+      ]
+    }
+  }
+}

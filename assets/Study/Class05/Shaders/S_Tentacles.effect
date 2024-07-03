@@ -1,0 +1,67 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: vs:vert # builtin header
+      frag: fs:frag
+      properties: &props
+        cilpMask:       { value: 0.0, editor: { displayName: "Clip Mask", step: 0.001 } }
+        expand:         { value: 0.0, editor: { displayName: "Expand",slide: true, range: [-1, 1], step: 0.01 } }
+        grow:           { value: 0.1, editor: { displayName: "Grow", slide: true, range: [0, 1], step: 0.01 } }
+        growMin:        { value: 0.0, editor: { displayName: "Grow Min", slide: true, range: [0, 1], step: 0.01 } }
+        growMax:        { value: 1.0, editor: { displayName: "Grow Max", slide: true, range: [0, 1.5], step: 0.01 } }
+        mainTexture:    { value: white }
+}%
+
+CCProgram sbo-data %{
+  uniform UboGlobal {
+    float expand;
+    float grow;
+    float growMin;
+    float growMax;
+    float cilpMask;
+  };
+}%
+
+CCProgram vs %{
+  precision highp float;
+  #include <cc-global>
+  #include <cc-local>
+  #include "sbo-data"
+
+  layout(location = 0) in vec4 a_position;
+  layout(location = 1) in vec3 a_normal;
+  layout(location = 2) in vec2 a_texCoord;
+
+  out vec2 v_uv;
+  out vec2 grow_uv;
+
+  vec4 vert () {
+    grow_uv = a_texCoord - grow;
+    v_uv = a_texCoord;
+    vec4 pos = vec4(a_normal, 0.0) * grow_uv.y + a_position;
+    return cc_matProj * cc_matView * cc_matWorld * pos;
+  }
+}%
+
+CCProgram fs %{
+  precision highp float;
+  #include "sbo-data"
+
+  in vec2 v_uv;
+  in vec2 grow_uv;
+
+  uniform sampler2D mainTexture;
+
+  vec4 frag () {
+    float invert_y = 1.0 - grow_uv.y;
+    float smooth_y = smoothstep(growMax, growMin, invert_y);
+    if (invert_y - cilpMask <= 0.0) {
+      discard;
+    }
+    vec4 col = texture(mainTexture, v_uv);
+    return vec4(col);
+  }
+}%
